@@ -1,0 +1,10 @@
+[
+    {
+        "id": 1,
+        "recipient": "mail1@mail.com"
+    },
+    {
+        "id": 2,
+        "recipient": "mail2@mail.com"
+    }
+]

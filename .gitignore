@@ -1,0 +1,4 @@
+internal/data/
+.db
+.env
+.log
