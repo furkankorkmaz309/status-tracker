@@ -6,31 +6,6 @@ import (
 	"os"
 )
 
-func LoadFile[T any](pathEnv, filename string) ([]T, error) {
-	// take path from .env
-	path := os.Getenv(pathEnv)
-	if path == "" {
-		return nil, fmt.Errorf("%v not set", pathEnv)
-	}
-
-	// open file
-	file, err := os.Open(path + filename)
-	if err != nil {
-		return nil, fmt.Errorf("there is an error occured while opening file (%v) : %v", filename, err)
-	}
-
-	// decode file
-	var values []T
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&values)
-	if err != nil {
-		return nil, fmt.Errorf("an error occured while decoding file (%v) : %v", filename, err)
-	}
-
-	// return
-	return values, nil
-}
-
 func SaveFile[T any](pathEnv, filename string, values T) error {
 	// take path from .env
 	path := os.Getenv(pathEnv)

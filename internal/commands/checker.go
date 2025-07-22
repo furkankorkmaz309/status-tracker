@@ -1,4 +1,4 @@
-package checker
+package commands
 
 import (
 	"fmt"
@@ -7,17 +7,28 @@ import (
 
 	"github.com/furkankorkmaz309/status-tracker/internal/app"
 	"github.com/furkankorkmaz309/status-tracker/internal/models"
-	"github.com/furkankorkmaz309/status-tracker/internal/notifier"
 	"github.com/furkankorkmaz309/status-tracker/internal/storage"
 )
 
 func CheckSite(app app.App) error {
-	// print info
-	fmt.Println()
-	app.InfoLog.Println("Service control process starts")
+	// take service slice from database
+	query := `SELECT * FROM services`
+	rows, err := app.DB.Query(query)
+	if err != nil {
+		return fmt.Errorf("an error occurred while loading services : %v", err)
+	}
 
-	// take service slice from app
-	services := app.Services
+	var services []models.Service
+	for rows.Next() {
+		var service models.Service
+		err = rows.Scan(&service.ID, &service.Name, &service.Service)
+		if err != nil {
+			return fmt.Errorf("an error occurred while scanning service row : %v", err)
+		}
+
+		services = append(services, service)
+	}
+
 	emailStr := ""
 
 	// check every service with for each
@@ -27,7 +38,7 @@ func CheckSite(app app.App) error {
 	var checks []models.Checks
 	for _, v := range services {
 		// take start time
-		start := time.Now()
+		// start := time.Now()
 
 		// send request
 		var errMsg error
@@ -40,7 +51,7 @@ func CheckSite(app app.App) error {
 		defer resp.Body.Close()
 
 		// calculate elapsed time
-		elapsed := time.Since(start)
+		// elapsed := time.Since(start)
 
 		// if status code is 4xx or 5xx add to database and send email
 		statusCode := resp.StatusCode
@@ -61,7 +72,7 @@ func CheckSite(app app.App) error {
 				checks = append(checks, check)
 			}
 
-			fmt.Printf("Service : %v\tCode: %v\t in %v ms\n", v.Service, statusCode, float64(elapsed.Microseconds())/1000)
+			// fmt.Printf("Service : %v\tCode: %v\t in %v ms\n", v.Service, statusCode, float64(elapsed.Microseconds())/1000)
 			emailStr += fmt.Sprintf("We found an error on %v at %v%v", v.Service, time.Now().Format(time.RFC1123), "<br>")
 		}
 	}
@@ -77,7 +88,7 @@ func CheckSite(app app.App) error {
 
 	// send mail
 	if count > 0 {
-		err := notifier.SendGoMail(app, emailStr)
+		err := SendGoMail(app, emailStr)
 		if err != nil {
 			return err
 		}

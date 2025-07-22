@@ -33,8 +33,9 @@ go run .
 The `.env` file needs to be added to the project root directory. Example:
 
 env
-`DB_PATH = ../../internal/data/
-JSON_PATH = ../../internal/assets/
+
+`DB_PATH = ../../internal/data/\n
+JSON_PATH = ../../internal/assets/\n
 LOG_PATH = ../../internal/data/
 `
 

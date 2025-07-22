@@ -33,20 +33,48 @@ func InitDB() (*sql.DB, error) {
 		return nil, fmt.Errorf("an error occurred while connecting to database : %v", err)
 	}
 
-	// prepare query
-	query := `
+	// prepare checks query
+	queryChecks := `
 	CREATE TABLE IF NOT EXISTS checks(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	service_id INTEGER,
 	service_name TEXT,
 	checked_at TIMESTAMP,
-	status_code INTEGER
+	status_code INTEGER,
+	FOREIGN KEY (service_id) REFERENCES services(id)
 	)`
 
 	// execute query
-	_, err = db.Exec(query)
+	_, err = db.Exec(queryChecks)
 	if err != nil {
 		return nil, fmt.Errorf("an error occurred while creating checks table : %v", err)
+	}
+
+	// prepare service query
+	queryServices := `
+	CREATE TABLE IF NOT EXISTS services(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT UNIQUE,
+	service TEXT UNIQUE
+	)`
+
+	// execute query
+	_, err = db.Exec(queryServices)
+	if err != nil {
+		return nil, fmt.Errorf("an error occurred while creating services table : %v", err)
+	}
+
+	// prepare recipients query
+	queryRecipients := `
+	CREATE TABLE IF NOT EXISTS recipients(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	recipient TEXT UNIQUE
+	)`
+
+	// execute query
+	_, err = db.Exec(queryRecipients)
+	if err != nil {
+		return nil, fmt.Errorf("an error occurred while creating recipient table : %v", err)
 	}
 
 	// return
