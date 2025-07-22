@@ -1,6 +1,14 @@
+
 # Status Tracker
 
 **Status Tracker** is a Go-based tracking system that periodically checks the status of services defined via JSON, saves the results in a SQLite database and sends notifications to recipients when necessary.
+
+---
+
+### Branch Info
+
+- **Stable:** `main`  
+- **Development:** `update-deneme`
 
 ---
 
@@ -28,13 +36,15 @@
 git clone https://github.com/furkankorkmaz309/status-tracker.git
 cd status-tracker/cmd/status-tracker
 go run .
-````
+```
+### .env Example
 
-The `.env` file needs to be added to the project root directory. Example:
+Place a `.env` file in the project root with the following content:
 
-env
-`DB_PATH = ../../internal/data/
-JSON_PATH = ../../internal/assets/
-LOG_PATH = ../../internal/data/
-`
+```env
+DB_PATH=../../internal/data/
+JSON_PATH=../../internal/assets/
+LOG_PATH=../../internal/data/
+```
 
+> Make sure the paths match your project structure.
